@@ -2,10 +2,10 @@
 
 nohup python3 pipelines_benchmarking.py \
 --pipeline_type composed \
---model TA/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo \
+--model gpt-5-chat-latest \
 --category all \
---is_dataset_local True \
---output_folder ./results/pipelines/SAP \
---input_path ./datasets/SAP/dataset.csv \
---subset None \
---split None > ./log/SAP_composed_pipeline_Meta-Llama-3.1-70B-Instruct-Turbo.log 2>&1 &
+--is_dataset_local False \
+--output_folder ./results/pipelines/HarmBench \
+--input_path bench-llms/or-bench \
+--subset or-bench-hard-1k \
+--split train > ./log/HarmBench_composed_pipeline_gpt-5-chat-latest.log 2>&1 &

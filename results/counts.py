@@ -139,7 +139,7 @@ if __name__ == "__main__":
     # df = read_and_concatenate_csvs("./results/", "TA-*results.csv")
     
     # 读取or文件夹下的CSV文件
-    df = read_and_concatenate_csvs("./pipelines/SAP/implicit_pipeline/")
+    df = read_and_concatenate_csvs("./pipelines/HarmBench/composed_pipeline/")
     
     if not df.empty:
         # 查看数据基本信息

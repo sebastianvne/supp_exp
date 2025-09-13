@@ -45,7 +45,7 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
     #dataset = pandas.read_csv('./datasets/SAP/dataset.csv')
     dataset = get_dataset(input_path,is_local=is_dataset_local,subset=subset,split=split)
     if category == 'all':
-        categories_toexec = [item for item in pipelines_categories if item != 'violence' and item != 'fraud' and item != 'politics' and item != 'race' ]
+        categories_toexec = [item for item in pipelines_categories]
     else:
         categories_toexec = [category]
 
@@ -68,6 +68,7 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
 
     llm, sampling_params = init_judger()
     for model,client in tqdm.tqdm(zip(models_toexec,clients),desc = 'running models'):
+        category_err_flag = False
         print(f'running {model}...')
         pipeline = Pipeline(client,llm,sampling_params)
         if pipeline_type == 'explicit':
@@ -77,6 +78,9 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
         elif pipeline_type == 'composed':
             pipeline = ComposedPipeline(client,llm,sampling_params)
         for cat in categories_toexec:
-            pipeline.process_category(cat,dataset,output_folder)
+            _,category_err_flag = pipeline.process_category(cat,dataset,output_folder)
+        if category_err_flag:
+            print(f"category error, have run the whole dataset, break the loop")
+            break
 if __name__ == "__main__":
     fire.Fire(main)

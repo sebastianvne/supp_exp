@@ -12,6 +12,7 @@ class ComposedPipeline(Pipeline):
         self.explicit_pipeline = ExplicitPipeline(model,judger_llm,judger_sampling_params)
         self.implicit_pipeline = ImplicitPipeline(model,judger_llm,judger_sampling_params)
     def process_single_both(self,item,category,output_folder):
+        prompt = item.iloc[0]
         explicit_output = self.explicit_pipeline.process_single(item,category,output_folder,no_response = False,is_save = True)
         implicit_output = self.implicit_pipeline.process_single(item,category,output_folder,implicit_response = explicit_output['response'],no_response = True,is_save = True)
         if implicit_output is None or explicit_output is None:
@@ -19,22 +20,22 @@ class ComposedPipeline(Pipeline):
         
         if ( implicit_output['is_filtered_by_basemodel'] != [1]) and ( implicit_output['is_filtered_by_pipeline'] != [1]) and (explicit_output['is_filtered_by_pipeline'] != [1]):
             composed_output = {
-                "prompt": [item['prompt']],
+                "prompt": [prompt],
                 "explicit_output": [explicit_output],
                 "implicit_output": [implicit_output],
                 "final_response": [implicit_output['final_response']],
                 "is_filtered_by_pipeline": [0],
-                "category": [item['category']],
+                "category": [category],
             }
             return composed_output
         else:
             composed_output = {
-                "prompt": [item['prompt']],
+                "prompt": [prompt],
                 "explicit_output": [explicit_output],
                 "implicit_output": [implicit_output],
                 "final_response": [implicit_output['final_response']],
                 "is_filtered_by_pipeline": [1],
-                "category": [item['category']],
+                "category": [category],
             }
             return composed_output
 
@@ -52,7 +53,7 @@ class ComposedPipeline(Pipeline):
             else:
                 implicit_output = None
                 composed_output = {
-                    "prompt": [item['prompt']],
+                    "prompt": [prompt],
                     "explicit_output": [explicit_output],
                     "implicit_output": [implicit_output],
                     "final_response": [explicit_output['response']],
@@ -70,24 +71,30 @@ class ComposedPipeline(Pipeline):
                 "implicit_output": [implicit_output],
                 "final_response": [implicit_output['final_response']],
                 "is_filtered_by_pipeline": [0],
-                "category": [item['category']],
+                "category": [category],
             }
             return composed_output
         else:
             composed_output = {
-                "prompt": [item['prompt']],
+                "prompt": [prompt],
                 "explicit_output": [explicit_output],
                 "implicit_output": [implicit_output],
                 "final_response": [implicit_output['final_response']],
                 "is_filtered_by_pipeline": [1],
-                "category": [item['category']],
+                "category": [category],
             }
             return composed_output
 
             
     
     def process_category(self,category,dataset,output_folder):
-        filtered_dataset = dataset[dataset['category'] == category]
+        category_err_flag = False
+        try:
+            filtered_dataset = dataset[dataset['category'] == category]
+        except:
+            print(f"category {category} not found in dataset")
+            category_err_flag = True
+            filtered_dataset = dataset
         print(f'running {category}...')
         outputs = []
         for _,item in tqdm(filtered_dataset.iterrows(),desc = 'running prompts'):
@@ -98,4 +105,4 @@ class ComposedPipeline(Pipeline):
             to_path = self.model.model_name.replace("/","-")
             df.to_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_results.csv',mode='a',header=not os.path.isfile(f'{output_folder}/composed_pipeline/{to_path}_{category}_results.csv'),index=False)
             outputs.append(output_data)
-        return outputs
+        return outputs,category_err_flag

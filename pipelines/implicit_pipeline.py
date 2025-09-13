@@ -424,11 +424,10 @@ class ImplicitPipeline(Pipeline):
             return False
 
     def process_single(self,item,category,output_folder,implicit_response = None,no_response = False,is_save = True):
-        prompt = item['prompt']
+        prompt = item.iloc[0]
         if (not implicit_response is None) and no_response:
             implicit_response = implicit_response
         else:
-            prompt = item['prompt']
             implicit_response = self.process_implicit_analysis(prompt)
         if self._is_refuse(prompt,implicit_response):
             metrics = {
@@ -499,11 +498,17 @@ class ImplicitPipeline(Pipeline):
         return output_data
 
     def process_category(self,category,dataset,output_folder):
-        filtered_dataset = dataset[dataset['category'] == category]
+        category_err_flag = False
+        try:
+            filtered_dataset = dataset[dataset['category'] == category]
+        except:
+            print(f"category {category} not found in dataset")
+            category_err_flag = True
+            filtered_dataset = dataset
         outputs = []
         for _,item in tqdm(filtered_dataset.iterrows(),desc = 'running prompts'):
             output_data = self.process_single(item,category,output_folder)
             if output_data is None:
                 continue
             outputs.append(output_data)
-            return outputs
+        return outputs,category_err_flag

@@ -61,7 +61,7 @@ class ExplicitPipeline(Pipeline):
         return self.model._response(final_prompt)
 
     def process_single(self,item,category,output_folder,no_response = False,is_save = True):
-        prompt = item['prompt']
+        prompt = item.iloc[0]
         eval_result = self.evaluate_prompt(prompt)
         score = int(eval_result)
         
@@ -75,11 +75,11 @@ class ExplicitPipeline(Pipeline):
                 response = self.generate_response(prompt)
             asr = calculateASR(self.judger_llm,self.judger_sampling_params,prompt,response)
         output = {
-            "prompt":[item['prompt']],
+            "prompt":[prompt],
             "response":[response],
             "score":[score],
             "is_filtered_by_pipeline":[1 if score >= 3 else 0],
-            "category":[item['category']],
+            "category":[category],
             "ASR":[asr]
         }
         #print(output)
@@ -91,11 +91,17 @@ class ExplicitPipeline(Pipeline):
 
     
     def process_category(self,category,dataset,output_folder):
-        filtered_dataset = dataset[dataset['category'] == category]
+        category_err_flag = False
+        try:
+            filtered_dataset = dataset[dataset['category'] == category]
+        except:
+            print(f"category {category} not found in dataset")
+            category_err_flag = True
+            filtered_dataset = dataset
         outputs = []
         for _,item in tqdm(filtered_dataset.iterrows(),desc = 'running prompts'):
             output_data = self.process_single(item,category,output_folder,no_response = True)
             if output_data is None:
                 continue
             outputs.append(output_data)
-        return outputs
+        return outputs,category_err_flag
