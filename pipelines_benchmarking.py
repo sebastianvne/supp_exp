@@ -2,7 +2,7 @@ from pipelines.explicit_pipeline import ExplicitPipeline
 from pipelines.implicit_pipeline import ImplicitPipeline
 from pipelines.pipeline import Pipeline
 from pipelines.tools import construct_dataset_from_dir
-from config import pipelines_categories,models_mistral,categories,models_close
+from config import or_bench_categories,models_mistral,models_close,models_open
 from models.finetuned_llama import FinetunedLlama
 from models.mistral import MistralLLM
 import fire
@@ -15,6 +15,8 @@ import os
 import time
 from models.closesource import CloseSourceLLM
 from pipelines.composed_pipeline import ComposedPipeline
+from models.opensource import OpenSourceLLM
+
 def init_judger():
     CLS_MODEL = "cais/HarmBench-Llama-2-13b-cls"
     llm = LLM(model=CLS_MODEL, tensor_parallel_size=1)
@@ -40,15 +42,15 @@ def get_dataset(path,is_local,subset = None, split = None):
     
     return dataset
 
-def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,subset = None,split = None):
+def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,subset = None,split = None,is_rewrite = False,max_rewrite_epoch = 3):
     
     #dataset = pandas.read_csv('./datasets/SAP/dataset.csv')
     dataset = get_dataset(input_path,is_local=is_dataset_local,subset=subset,split=split)
     if category == 'all':
-        categories_toexec = [item for item in pipelines_categories]
+        categories_toexec = [item for item in or_bench_categories]
     else:
         categories_toexec = [category]
-
+    clients = []
     if model == 'finetuned_llama':
         models_toexec = [model]
         clients = [FinetunedLlama(model,original_model=False) for model in models_toexec]
@@ -62,9 +64,30 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
         else:
             models_toexec = [model]
             clients = [MistralBenchmarking(model)]
-    if model in models_close:
+    if model == 'close-all':
+        models_toexec = models_close
+        for model in models_toexec:
+            try:
+                clients.append(CloseSourceLLM(model))
+            except Exception as e:
+                print(f"Error: {e}")
+                continue
+    elif model in models_close:
         models_toexec = [model]
         clients = [CloseSourceLLM(model)]
+
+    if model == 'open-all':
+        models_toexec = models_open
+        for model in models_toexec:
+            try:
+                clients.append(OpenSourceLLM(model))
+            except Exception as e:
+                print(f"Error: {e}")
+                continue
+    elif model in models_open:
+        models_toexec = [model]
+        clients = [OpenSourceLLM(model)]
+
 
     llm, sampling_params = init_judger()
     for model,client in tqdm.tqdm(zip(models_toexec,clients),desc = 'running models'):
@@ -74,9 +97,9 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
         if pipeline_type == 'explicit':
             pipeline = ExplicitPipeline(client,llm,sampling_params)
         elif pipeline_type == 'implicit':
-            pipeline = ImplicitPipeline(client,llm,sampling_params)
+            pipeline = ImplicitPipeline(client,llm,sampling_params,is_rewrite,max_rewrite_epoch)
         elif pipeline_type == 'composed':
-            pipeline = ComposedPipeline(client,llm,sampling_params)
+            pipeline = ComposedPipeline(client,llm,sampling_params,is_rewrite,max_rewrite_epoch)
         for cat in categories_toexec:
             _,category_err_flag = pipeline.process_category(cat,dataset,output_folder)
         if category_err_flag:

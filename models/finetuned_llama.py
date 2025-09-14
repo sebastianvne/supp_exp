@@ -1,7 +1,8 @@
 import pandas as pd
 import tqdm
 import os
-from tools import is_refuse
+from config import is_refuse_prompt
+import re
 #name: finetuned_llama
 
 prompt_template = '''<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a helpful assistant. <|eot_id|><|start_header_id|>user<|end_header_id|>{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>'''
@@ -26,6 +27,16 @@ class FinetunedLlama:
             self.finetuned_model = finetuned_model
         else:
             self.finetuned_model = Original_model
+
+    def _is_refuse(self,prompt,response):
+        prompt = is_refuse_prompt.format(prompt=prompt,response=response)
+        is_refuse_response = self._response(prompt)
+        match = re.findall(r'\[\[.*?\]\]', is_refuse_response)
+        result = match.group(0) if match else None
+        if 'refusal' in result:
+            return True
+        else:
+            return False
 
     def _response(self,prompt):
         inputs = self.tokenizer(prompt, return_tensors="pt").to('cuda')
@@ -52,7 +63,7 @@ class FinetunedLlama:
                 prompt = item['prompt']
                 final_prompt = prompt_template.format(prompt=instruct_categories[instruct_category]+"Prompt to be process:"+prompt)
                 response = self._response(final_prompt)
-                is_over_refusal = is_refuse(response)
+                is_over_refusal = _is_refuse(response)
                 if is_over_refusal == 1:
                     count += 1
                 results = {

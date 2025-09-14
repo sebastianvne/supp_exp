@@ -7,10 +7,10 @@ import csv
 from tqdm import tqdm
 
 class ComposedPipeline(Pipeline):
-    def __init__(self,model,judger_llm,judger_sampling_params):
+    def __init__(self,model,judger_llm,judger_sampling_params,is_rewrite = False,max_rewrite_epoch = 3):
         super().__init__(model,judger_llm,judger_sampling_params)
         self.explicit_pipeline = ExplicitPipeline(model,judger_llm,judger_sampling_params)
-        self.implicit_pipeline = ImplicitPipeline(model,judger_llm,judger_sampling_params)
+        self.implicit_pipeline = ImplicitPipeline(model,judger_llm,judger_sampling_params,is_rewrite,max_rewrite_epoch)
     def process_single_both(self,item,category,output_folder):
         prompt = item.iloc[0]
         explicit_output = self.explicit_pipeline.process_single(item,category,output_folder,no_response = False,is_save = True)

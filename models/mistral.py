@@ -3,14 +3,25 @@ from mistralai import Mistral
 from config import mistral_api_key
 import pandas as pd
 import tqdm
-from tools import is_refuse
-
+from config import is_refuse_prompt
+import re
 api_key = mistral_api_key
 
 class MistralLLM:
     def __init__(self,model_name):
         self.model_name = model_name
         self.client = Mistral(api_key=api_key)
+
+    def _is_refuse(self,prompt,response):
+        prompt = is_refuse_prompt.format(prompt=prompt,response=response)
+        is_refuse_response = self._response(prompt)
+        match = re.findall(r'\[\[.*?\]\]', is_refuse_response)
+        result = match.group(0) if match else None
+        if 'refusal' in result:
+            return True
+        else:
+            return False
+
 
     def _response(self,prompt):
         try:
@@ -46,7 +57,7 @@ class MistralLLM:
             for item in tqdm.tqdm(filtered_dataset,desc = 'running prompts'):
                 prompt = item['prompt']
                 response = self._response(instruct_categories[instruct_category] + prompt)
-                is_over_refusal = is_refuse(response)
+                is_over_refusal = _is_refuse(response)
                 if is_over_refusal == 1:
                     count += 1
                 results = {

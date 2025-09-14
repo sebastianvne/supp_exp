@@ -1,7 +1,8 @@
 import json
 import os
 from tqdm import tqdm
-from pipelines.config import exp_evaluation_prompt, is_refuse, calculateASR,is_refuse_prompt
+from pipelines.config import exp_evaluation_prompt, is_refuse, calculateASR
+from config import is_refuse_prompt
 import pandas as pd
 from pipelines.pipeline import Pipeline
 class ExplicitPipeline(Pipeline):
