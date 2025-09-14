@@ -103,6 +103,6 @@ class ComposedPipeline(Pipeline):
                 continue
             df = pandas.DataFrame(output_data)
             to_path = self.model.model_name.replace("/","-")
-            df.to_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_results.csv',mode='a',header=not os.path.isfile(f'{output_folder}/composed_pipeline/{to_path}_{category}_results.csv'),index=False)
+            df.to_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv',mode='a',header=not os.path.isfile(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv'),index=False)
             outputs.append(output_data)
         return outputs,category_err_flag

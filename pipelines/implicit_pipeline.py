@@ -477,7 +477,7 @@ class ImplicitPipeline(Pipeline):
             if is_save:
                 df = pandas.DataFrame(output_data)
                 to_path = self.model.model_name.replace("/","-")
-                df.to_csv(f'{output_folder}/implicit_pipeline/{to_path}_{category}_results.csv',mode='a',header=not os.path.isfile(f'{output_folder}/implicit_pipeline/{to_path}_{category}_results.csv'),index=False)
+                df.to_csv(f'{output_folder}/implicit_pipeline/{to_path}_{category}_{self.is_rewrite}_{self.max_rewrite_epoch}_results.csv',mode='a',header=not os.path.isfile(f'{output_folder}/implicit_pipeline/{to_path}_{category}_{self.is_rewrite}_{self.max_rewrite_epoch}_results.csv'),index=False)
             return output_data
         explicit_response = self.process_explicit_analysis(prompt, implicit_response)
         if not explicit_response:
@@ -511,9 +511,9 @@ class ImplicitPipeline(Pipeline):
             df = pandas.DataFrame(output_data)
             to_path = self.model.model_name.replace("/","-")
             df.to_csv(
-                f'{output_folder}/implicit_pipeline/{to_path}_{category}_results.csv',
+                f'{output_folder}/implicit_pipeline/{to_path}_{category}_{self.is_rewrite}_{self.max_rewrite_epoch}_results.csv',
                 mode='a',
-                header=not os.path.isfile(f'{output_folder}/implicit_pipeline/{to_path}_{category}_results.csv'),
+                header=not os.path.isfile(f'{output_folder}/implicit_pipeline/{to_path}_{category}_{self.is_rewrite}_{self.max_rewrite_epoch}_results.csv'),
                 index=False,
             )
         return output_data
