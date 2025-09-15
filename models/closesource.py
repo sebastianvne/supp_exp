@@ -27,6 +27,7 @@ class CloseSourceLLM:
                         "content":prompt
                     }
                 ],
+                temperature=0.0,
             )
             return response.choices[0].message.content
         except Exception as e:

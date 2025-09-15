@@ -90,16 +90,17 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
 
 
     llm, sampling_params = init_judger()
+    refusal_judger_llm = CloseSourceLLM('gpt-4o')
     for model,client in tqdm.tqdm(zip(models_toexec,clients),desc = 'running models'):
         category_err_flag = False
         print(f'running {model}...')
-        pipeline = Pipeline(client,llm,sampling_params)
+        pipeline = Pipeline(client,llm,sampling_params,refusal_judger_llm)
         if pipeline_type == 'explicit':
-            pipeline = ExplicitPipeline(client,llm,sampling_params)
+            pipeline = ExplicitPipeline(client,llm,sampling_params,refusal_judger_llm)
         elif pipeline_type == 'implicit':
-            pipeline = ImplicitPipeline(client,llm,sampling_params,is_rewrite,max_rewrite_epoch)
+            pipeline = ImplicitPipeline(client,llm,sampling_params,refusal_judger_llm,is_rewrite,max_rewrite_epoch)
         elif pipeline_type == 'composed':
-            pipeline = ComposedPipeline(client,llm,sampling_params,is_rewrite,max_rewrite_epoch)
+            pipeline = ComposedPipeline(client,llm,sampling_params,refusal_judger_llm,is_rewrite,max_rewrite_epoch)
         for cat in categories_toexec:
             _,category_err_flag = pipeline.process_category(cat,dataset,output_folder)
         if category_err_flag:

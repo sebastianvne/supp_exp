@@ -139,14 +139,14 @@ if __name__ == "__main__":
     # df = read_and_concatenate_csvs("./results/", "TA-*results.csv")
     
     # 读取or文件夹下的CSV文件
-    df = read_and_concatenate_csvs("./pipelines/HarmBench/composed_pipeline/")
+    df = read_and_concatenate_csvs("./pipelines/or-bench-hard-1k/implicit_pipeline/")
     
     if not df.empty:
         # 查看数据基本信息
         print(f'\n数据总长度: {len(df)}')
         
         # 分析某个列的值分布
-        column_name = "is_filtered_by_pipeline"
+        column_name = "is_filtered_by_basemodel"
         if column_name in df.columns:
             counts = df[column_name].value_counts()
             print(f'\n{column_name} 列的值分布:')

@@ -33,7 +33,8 @@ class MistralLLM:
                         "role": "user",
                         "content": prompt,
                     },
-                ]
+                ],
+                temperature=0.0,
             )
             return chat_response.choices[0].message.content
         except Exception as e:

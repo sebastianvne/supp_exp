@@ -5,7 +5,7 @@ read log_file
 
 nohup python3 pipelines_benchmarking.py \
 --pipeline_type composed \
---model gpt-3.5-turbo-0125 \
+--model close-all \
 --category all \
 --is_dataset_local True \
 --output_folder ./results/pipelines/or-bench-hard-1k \
@@ -15,3 +15,4 @@ nohup python3 pipelines_benchmarking.py \
 
 echo "running..."
 echo "pid: [$!]"
+#or-bench-hard-1k_composed_close-all_True_3_results.log
