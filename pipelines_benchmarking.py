@@ -10,13 +10,16 @@ import tqdm
 from datasets import load_dataset
 import pandas
 from pipelines.config import PROMPT_TEMPLATE
-from vllm import LLM,SamplingParams
+#from vllm import LLM,SamplingParams 
+#为了保证在非vllm环境下的运行，使用transformer改写这些方法
 import os
 import time
 from models.closesource import CloseSourceLLM
 from pipelines.composed_pipeline import ComposedPipeline
 from models.opensource import OpenSourceLLM
-
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+'''
 def init_judger():
     CLS_MODEL = "cais/HarmBench-Llama-2-13b-cls"
     llm = LLM(model=CLS_MODEL, tensor_parallel_size=1)
@@ -26,6 +29,13 @@ def init_judger():
         temperature=0.0,
     )
     return llm, sampling_params
+'''
+def init_judger():
+    CLS_MODEL = "cais/HarmBench-Llama-2-13b-cls"
+    tokenizer = AutoTokenizer.from_pretrained(CLS_MODEL)
+    model = AutoModelForCausalLM.from_pretrained(CLS_MODEL,torch_dtype=torch.float16,device_map="auto")
+    return model, tokenizer
+
 
 def get_dataset(path,is_local,subset = None, split = None):
 
