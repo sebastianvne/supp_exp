@@ -68,7 +68,7 @@ models_open = [
 ]
 
 #or-bench categories and harmbench categories
-or_bench_categories = ['deception','harassment','harmful','hate','illegal','privacy','self-harm','sexual','unethical','violence','all']
+or_bench_categories = ['deception','harassment','harmful','hate','illegal','privacy','self-harm','sexual','unethical','violence']
 harmbench_categories = ['chemical_biological', 'copyright', 'cybercrime_intrusion', 'harassment_bullying', 'harmful', 'illegal', 'misinformation_disinformation']
 
 

@@ -5,6 +5,7 @@ import pandas
 import os
 import csv
 from tqdm import tqdm
+import pandas as pd
 
 class ComposedPipeline(Pipeline):
     def __init__(self,model,judger_llm,judger_sampling_params,refusal_judger_llm,is_rewrite = False,max_rewrite_epoch = 3):
@@ -57,12 +58,21 @@ class ComposedPipeline(Pipeline):
             filtered_dataset = dataset
         print(f'running {category}...')
         outputs = []
-        for _,item in tqdm(filtered_dataset.iterrows(),desc = 'running prompts'):
+
+        to_path = self.model.model_name.replace("/","-")
+        breakpoint_df = pd.read_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv')
+        breakpoint_num = len(breakpoint_df) - 1
+        print(f"breakpoint detected items number: {breakpoint_num}")
+        print(f"total category item number: {len(filtered_dataset)}")
+        for i, (index,item) in tqdm(enumerate(filtered_dataset.iterrows()),desc = 'running prompts'):
+            #print(f"running {i} prompts")
+            if i <= breakpoint_num:
+                continue
+            print(f"running {i} prompts")
             output_data = self.process_single_both(item,category,output_folder)
             if output_data is None:
                 continue
             df = pandas.DataFrame(output_data)
-            to_path = self.model.model_name.replace("/","-")
             df.to_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv',mode='a',header=not os.path.isfile(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv'),index=False)
             outputs.append(output_data)
         return outputs,category_err_flag

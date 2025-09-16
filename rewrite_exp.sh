@@ -11,7 +11,7 @@ nohup python3 pipelines_benchmarking.py \
 --output_folder ./results/pipelines/or-bench-hard-1k \
 --input_path ./datasets/or-bench/or-bench-hard-1k.csv  \
 --is_rewrite True \
---max_rewrite_epoch 3 \ > ./log/${log_file} 2>&1 &
+--max_rewrite_epoch 3 > ./log/${log_file} 2>&1 &
 
 echo "running..."
 echo "pid: [$!]"
