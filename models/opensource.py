@@ -18,7 +18,7 @@ class OpenSourceLLM:
 
     def lazy_init(self):
         # 导入模型和分词器
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name,use_fast=False)
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
