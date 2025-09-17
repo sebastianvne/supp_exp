@@ -13,7 +13,6 @@ echo "Job id: $PBS_JOBID"
 echo "Running on nodes:"
 cat $PBS_NODEFILE                # 列出分配到的具体节点
 source activate supp_exp
-source $HOME/supp_exp/venv/bin/activate
 OE_FILE="./log/or-bench-hard-1k_composed_open-all_True_3.log"
 python3 pipelines_benchmarking.py \
 --pipeline_type composed \
