@@ -104,6 +104,8 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
     for model,client in tqdm.tqdm(zip(models_toexec,clients),desc = 'running models'):
         category_err_flag = False
         print(f'running {model}...')
+        if model in models_open:
+            client.lazy_init()
         pipeline = Pipeline(client,llm,sampling_params,refusal_judger_llm)
         if pipeline_type == 'explicit':
             pipeline = ExplicitPipeline(client,llm,sampling_params,refusal_judger_llm)

@@ -10,12 +10,19 @@ class OpenSourceLLM:
         self.model_name = model_name
         self.device = device
         
+        self.tokenizer = None
+        self.model = None
+
         # 导入模型和分词器
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        #self.lazy_init()
+
+    def lazy_init(self):
+        # 导入模型和分词器
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-            device_map="auto" if device == "cuda" else None
+            self.model_name,
+            torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
+            device_map="auto" if self.device == "cuda" else None
         )
         
         # 设置pad_token
