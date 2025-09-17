@@ -1,5 +1,5 @@
 import os
-from mistralai import Mistral
+from mistralai.client import MistralClient #use compatiable lib import
 from config import mistral_api_key
 import pandas as pd
 import tqdm

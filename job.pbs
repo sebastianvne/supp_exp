@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N opensource_pipeline            # 作业名
+#PBS -q qgpu01                      # 提交到 gpu 队列
+#PBS -l walltime=72:00:00        # 最长 4 小时
+#PBS -l nodes=1:ppn=20 -W x=GRES:gpu@4
+#PBS -V                          # 导出当前环境变量b
+#PBS -M jinghanwang20@gmail.com
+#PBS -m abe                      # 作业开始/结束/异常时发送邮件
+#PBS -j oe
+
+cd $PBS_O_WORKDIR                # 切换到提交时的目录（非常重要）
+echo "Job id: $PBS_JOBID"
+echo "Running on nodes:"
+cat $PBS_NODEFILE                # 列出分配到的具体节点
+source activate opensource_exp
+python3 pipelines_benchmarking.py \
+--pipeline_type composed \
+--model open-all \
+--category all \
+--is_dataset_local True \
+--output_folder ./results/pipelines/or-bench-hard-1k \
+--input_path ./datasets/or-bench/or-bench-hard-1k.csv  \
+--is_rewrite True \
+--max_rewrite_epoch 3
+
+OE_FILE="./log/or-bench-hard-1k_composed_open-all_True_3.log"

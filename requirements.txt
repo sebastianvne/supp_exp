@@ -7,7 +7,6 @@ anyio==4.10.0
 astor==0.8.1
 async-timeout==5.0.1
 attrs==25.3.0
-bitsandbytes==0.47.0
 blake3==1.0.5
 cachetools==6.2.0
 cbor2==5.7.0
