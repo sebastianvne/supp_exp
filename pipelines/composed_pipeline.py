@@ -60,11 +60,11 @@ class ComposedPipeline(Pipeline):
         outputs = []
 
         to_path = self.model.model_name.replace("/","-")
-        try:        
-                breakpoint_df = pd.read_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv')
-                breakpoint_num = len(breakpoint_df) - 1
+        try:
+            breakpoint_df = pd.read_csv(f'{output_folder}/composed_pipeline/{to_path}_{category}_{self.implicit_pipeline.is_rewrite}_{self.implicit_pipeline.max_rewrite_epoch}_results.csv')
+            breakpoint_num = len(breakpoint_df) - 1
         except:
-                breakpoint_num = -1 
+            breakpoint_num = -1
         print(f"breakpoint detected items number: {breakpoint_num}")
         print(f"total category item number: {len(filtered_dataset)}")
         for i, (index,item) in tqdm(enumerate(filtered_dataset.iterrows()),desc = 'running prompts'):
