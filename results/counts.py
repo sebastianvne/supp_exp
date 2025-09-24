@@ -139,7 +139,7 @@ if __name__ == "__main__":
     # df = read_and_concatenate_csvs("./results/", "TA-*results.csv")
     
     # 读取or文件夹下的CSV文件
-    df = read_and_concatenate_csvs("./pipelines/or-bench-hard-1k/implicit_pipeline/",file_pattern = 'gpt*privacy*.csv')
+    df = read_and_concatenate_csvs("./pipelines/or-bench-hard-1k/implicit_pipeline/",file_pattern = 'claude-3*.csv')
     
     if not df.empty:
         # 查看数据基本信息
