@@ -6,7 +6,7 @@ load_dotenv()
 
 mistral_api_key = os.getenv('MISTRAL_API_KEY')
 api_key = os.getenv('API_KEY')
-general_endpoint = 'https://api.ohmygpt.com/v1/'
+general_endpoint = "https://c-z0-api-01.hash070.com/v1"
 
 
 models_mistral = ['mistral-large-latest','mistral-small-latest','mistral-medium-latest']

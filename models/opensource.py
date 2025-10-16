@@ -29,12 +29,12 @@ class OpenSourceLLM:
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
-    def _response(self, prompt, max_new_tokens=100, temperature=0):
+    def _response(self, prompt, max_new_tokens=32, temperature=0.1):
         """生成响应"""
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
         
         with torch.no_grad():
-            if temperature == 0:
+            if temperature == 0.0:
                 # 使用贪婪解码，确定性生成
                 outputs = self.model.generate(
                     **inputs,
@@ -52,9 +52,10 @@ class OpenSourceLLM:
                     pad_token_id=self.tokenizer.eos_token_id
                 )
         
-        response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        response = self.tokenizer.decode(outputs[0], skip_special_tokens=False)
         # 移除输入部分，只返回生成的内容
         response = response[len(prompt):].strip()
+        
         return response
 
     def _is_refuse(self, prompt, response):

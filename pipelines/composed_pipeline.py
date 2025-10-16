@@ -19,14 +19,15 @@ class ComposedPipeline(Pipeline):
         if implicit_output is None or explicit_output is None:
             return None
         
-        if ( implicit_output['is_filtered_by_basemodel'] != [1]) and ( implicit_output['is_filtered_by_pipeline'] != [1]) and (explicit_output['is_filtered_by_pipeline'] != [1]) and (explicit_output['is_filtered_by_basemodel'] != [1]):
+        if ( implicit_output['is_filtered_by_basemodel'] != [1]) and ( implicit_output['is_original_filtered_by_pipeline'] != [1]) and ( implicit_output['is_rewrite_filtered_by_pipeline'] != [1]) and (explicit_output['is_filtered_by_pipeline'] != [1]) and (explicit_output['is_filtered_by_basemodel'] != [1]):
             composed_output = {
                 "prompt": [prompt],
                 "explicit_output": [explicit_output],
                 "implicit_output": [implicit_output],
                 "final_response": [implicit_output['final_response']],
                 "is_filtered_by_composed_pipeline": [0],
-                "is_filtered_by_implicit_pipeline": [0],
+                "is_rewrite_filtered_by_implicit_pipeline": [0],
+                "is_original_filtered_by_implicit_pipeline": [0],
                 "is_filtered_by_implicit_basemodel": [0],
                 "is_filtered_by_explicit_pipeline": [0],
                 "is_filtered_by_explicit_basemodel": [0],
@@ -40,7 +41,8 @@ class ComposedPipeline(Pipeline):
                 "implicit_output": [implicit_output],
                 "final_response": [implicit_output['final_response']],
                 "is_filtered_by_composed_pipeline": [1],
-                "is_filtered_by_implicit_pipeline": implicit_output['is_filtered_by_pipeline'],
+                "is_rewrite_filtered_by_implicit_pipeline": implicit_output['is_rewrite_filtered_by_pipeline'],
+                "is_original_filtered_by_implicit_pipeline": implicit_output['is_original_filtered_by_pipeline'],
                 "is_filtered_by_implicit_basemodel": implicit_output['is_filtered_by_basemodel'],
                 "is_filtered_by_explicit_pipeline": explicit_output['is_filtered_by_pipeline'],
                 "is_filtered_by_explicit_basemodel": explicit_output['is_filtered_by_basemodel'],
