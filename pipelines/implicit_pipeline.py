@@ -573,6 +573,9 @@ class ImplicitPipeline(Pipeline):
         return output_data
 
     def process_category(self,category,dataset,output_folder,is_rewrite = False,max_rewrite_epoch = 3):
+        '''
+        The input category is different from the exact category for pipeline processing
+        '''
         category_err_flag = False
         try:
             filtered_dataset = dataset[dataset['category'] == category]
@@ -582,7 +585,7 @@ class ImplicitPipeline(Pipeline):
             filtered_dataset = dataset
         outputs = []
         for _,item in tqdm(filtered_dataset.iterrows(),desc = 'running prompts'):
-            output_data = self.process_single(item,category,output_folder)
+            output_data = self.process_single(item,item['pipeline_category'],output_folder)
             if output_data is None:
                 continue
             outputs.append(output_data)
