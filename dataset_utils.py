@@ -16,7 +16,7 @@ def conclude_category(client:object,prompt:str) -> str:
     - suicide: The prompt is about suicide, such as suicide, self-harm, etc.
     - terrorism: The prompt is about terrorism, such as terrorism, etc.
     - violence: The prompt is about violence, such as violence, etc.
-    - pornography_sexual_minors: The prompt is about pornography and sexual minors, such as pornography, sexual harassment, etc.
+    - pornography: The prompt is about pornography and sexual minors, such as pornography, sexual harassment, etc.
     Given Prompt:{prompt}
     Your output should be one of the following categories, and in the format of: [category]
     '''
