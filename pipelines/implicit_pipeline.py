@@ -294,6 +294,9 @@ def process_severity(input_data, category, mu_k=None, alpha=1, verbose=False):
         print("-" * 50)
 
     # Process each (position, severity)
+
+    #chagelog: should make it softmax.
+
     for match in matches:
         pos = int(match[0])  # Position
         severity_letter = match[1]  # Original severity letter
@@ -316,6 +319,14 @@ def process_severity(input_data, category, mu_k=None, alpha=1, verbose=False):
 
     if verbose:
         print("\nSeverity calculation:")
+
+    #adjust the weight to be softmax:
+    sum_weight = 0
+    for details in severity_details:
+        sum_weight += details['weight']
+    for details in severity_details:
+        details['weight'] = details['weight'] / sum_weight
+        details['weighted_severity'] = details['weighted_severity'] / sum_weight
 
     # Apply category-specific severity calculation
     final_severity, metrics = calculate_severity(severity_list, category, verbose)
