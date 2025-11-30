@@ -6,7 +6,7 @@ load_dotenv()
 
 mistral_api_key = os.getenv('MISTRAL_API_KEY')
 api_key = os.getenv('API_KEY')
-general_endpoint = "https://c-z0-api-01.hash070.com/v1"
+general_endpoint = "https://c-z0-api-01.hash070.com/v1/"
 
 
 models_mistral = ['mistral-large-latest','mistral-small-latest','mistral-medium-latest']
@@ -26,7 +26,7 @@ models_close = [
     'gpt-4o-2024-08-06',
     'gpt-4o',
     'gpt-4-turbo-2024-04-09',
-    'gpt-4-0125-preview'
+    'gpt-4-0125-preview',
     #have but not in list:
     #'gpt-3.5-turbo-1106',
     #'gpt-3.5-turbo'

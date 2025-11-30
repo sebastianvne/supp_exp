@@ -58,6 +58,7 @@ def calculate_severity(severity_list, category, verbose=False):
     # Extract severities and weighted severities
     severities = [s[1] for s in severity_list]
     weighted_severities = [s[2] for s in severity_list]
+    weight = [s[3] for s in severity_list]
     
     # Calculate common metrics
     max_severity = max(severities)
@@ -303,7 +304,7 @@ def process_severity(input_data, category, mu_k=None, alpha=1, verbose=False):
         severity = severity_map[severity_letter]  # Convert A-E to numeric score
         weight = position_weight(pos, n, mu_k, alpha)  # Get position-based weight
         weighted_severity = severity * weight
-        severity_list.append((pos, severity, weighted_severity))
+        severity_list.append((pos, severity, weighted_severity, weight))
         
         # Store each sentence's severity details
         severity_details.append({
@@ -321,12 +322,12 @@ def process_severity(input_data, category, mu_k=None, alpha=1, verbose=False):
         print("\nSeverity calculation:")
 
     #adjust the weight to be softmax:
-    sum_weight = 0
-    for details in severity_details:
-        sum_weight += details['weight']
-    for details in severity_details:
-        details['weight'] = details['weight'] / sum_weight
-        details['weighted_severity'] = details['weighted_severity'] / sum_weight
+    #sum_weight = 0
+    #for details in severity_details:
+    #    sum_weight += details['weight']
+    #for details in severity_details:
+    #    details['weight'] = details['weight'] / sum_weight
+    #    details['weighted_severity'] = details['weighted_severity'] / sum_weight
 
     # Apply category-specific severity calculation
     final_severity, metrics = calculate_severity(severity_list, category, verbose)

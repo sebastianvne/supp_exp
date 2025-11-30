@@ -32,7 +32,7 @@ def init_judger():
 '''
 def init_judger():
     CLS_MODEL = "cais/HarmBench-Llama-2-13b-cls"
-    tokenizer = AutoTokenizer.from_pretrained(CLS_MODEL)
+    tokenizer = AutoTokenizer.from_pretrained(CLS_MODEL,use_fast = False)
     model = AutoModelForCausalLM.from_pretrained(CLS_MODEL,torch_dtype=torch.float16,device_map="auto")
     return model, tokenizer
 
@@ -61,6 +61,7 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
     else:
         categories_toexec = [category]
     clients = []
+    models_toexec = []
     if model == 'finetuned_llama':
         models_toexec = [model]
         clients = [FinetunedLlama(model,original_model=False) for model in models_toexec]
@@ -82,7 +83,7 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
             except Exception as e:
                 print(f"Error: {e}")
                 continue
-    elif model in models_close:
+    if model in models_close:
         models_toexec = [model]
         clients = [CloseSourceLLM(model)]
 
@@ -97,6 +98,9 @@ def main(pipeline_type,model,category,is_dataset_local,output_folder,input_path,
     elif model in models_open:
         models_toexec = [model]
         clients = [OpenSourceLLM(model)]
+
+    if not models_toexec:
+        raise ValueError(f"Unsupported model '{model}'. 请检查 config.py 中的模型列表或脚本入参。")
 
 
     llm, sampling_params = init_judger()

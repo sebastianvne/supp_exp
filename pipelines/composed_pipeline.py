@@ -14,8 +14,8 @@ class ComposedPipeline(Pipeline):
         self.implicit_pipeline = ImplicitPipeline(model,judger_llm,judger_sampling_params,refusal_judger_llm,is_rewrite,max_rewrite_epoch)
     def process_single_both(self,item,category,output_folder):
         prompt = item.iloc[0]
-        explicit_output = self.explicit_pipeline.process_single(item,category,output_folder,no_response = False,is_save = True)
-        implicit_output = self.implicit_pipeline.process_single(item,category,output_folder,implicit_response = None,no_response = False,is_save = True)
+        explicit_output = self.explicit_pipeline.process_single(item,item['pipeline_category'],output_folder,no_response = False,is_save = True)
+        implicit_output = self.implicit_pipeline.process_single(item,item['pipeline_category'],output_folder,implicit_response = None,no_response = False,is_save = True)
         if implicit_output is None or explicit_output is None:
             return None
         

@@ -9,7 +9,6 @@ class OpenSourceLLM:
     def __init__(self, model_name, device="cuda" if torch.cuda.is_available() else "cpu"):
         self.model_name = model_name
         self.device = device
-        
         self.tokenizer = None
         self.model = None
 
