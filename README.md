@@ -1,6 +1,3 @@
-# On Run Works
-
-##  pipeline的泛化能力，以及composed pipeline的能力
 
 ### models list
     gpt： gpt oss, gpt 4o, gpt-5-nano,gpt-5-chat,gpt-5-mini, gpt-3.5-turbo-1106, gpt-3.5-turbo-0125
